@@ -29,8 +29,8 @@ class DatabaseSeeder extends Seeder
         $this->call(CategorySeeder::class);
         $this->call(MovieSeeder::class);
 
-        //factory
-        Movie::factory(100)->create();
-        // MovieFactory::new()->count(10)->create();
+        // //factory
+        // Movie::factory(100)->create();
+        // // MovieFactory::new()->count(10)->create();
     }
 }

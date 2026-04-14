@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [MovieController::class, 'index']);
-Route::get('/movie/{id}', [MovieController::class, 'detail']);
-Route::get('/movies/create', [MovieController::class, 'create']);
-Route::post('/movies/store', [MovieController::class, 'store']);
-Route::get('/movies/data', [MovieController::class, 'data']);
-Route::get('/movies/edit/{id}', [MovieController::class, 'form_edit']);
+// Homepage with search
+Route::get('/', [MovieController::class, 'index'])->name('movies.index');
 
-Route::post('movies/{movie}/update', [MovieController::class, 'update'])->name('movies.update');
-Route::get('movies/delete/{id}', [MovieController::class, 'delete'])->name('movies.delete');
+// RESTful Movie Resource Routes
+Route::resource('movies', MovieController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']);
+
+// Custom routes for data listing (for compatibility)
+Route::get('/movies/data', [MovieController::class, 'data'])->name('movies.data');
+Route::get('/movie/{id}', [MovieController::class, 'detail'])->name('movies.detail');

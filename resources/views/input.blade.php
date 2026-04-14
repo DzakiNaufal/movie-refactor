@@ -1,9 +1,9 @@
 @extends('layout.template')  
 @section('title', 'Input Data Movie')  
 @section('content')
-		<a href="/movies/data" class="btn btn-primary mt-4">List Movie</a>
+		<a href="{{ route('movies.data') }}" class="btn btn-primary mt-4">List Movie</a>
 		<h2 class="mb-4">Tambah Movie Baru</h2>
-        <form action="/movies/store" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('movies.store') }}" method="POST" enctype="multipart/form-data">
 			@csrf
 			<div class="mb-3">
 				<label for="id" class="form-label">ID Film:</label>

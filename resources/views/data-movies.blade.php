@@ -25,8 +25,12 @@
             <td>{{ $movie->tahun }}</td>
             <td>{{ $movie->pemain }}</td>
             <td class="text-nowrap">
-                <a href="/movies/edit/{{ $movie['id'] }}" class="btn btn-warning">Edit</a>
-                <a href="{{ route('movies.delete', ['id' => $movie->id]) }}" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a>
+                <a href="{{ route('movies.edit', $movie->id) }}" class="btn btn-warning">Edit</a>
+                <form action="{{ route('movies.destroy', $movie->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</button>
+                </form>
             </td>
         </tr>
         @endforeach
