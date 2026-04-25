@@ -1,10 +1,25 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="height: 100%;">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>tiMovie - @yield('title', 'Website')</title>
     <link href="/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      
+      .container {
+        flex: 1;
+      }
+      
+      footer {
+        margin-top: auto;
+      }
+    </style>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg bg-success" data-bs-theme="dark">
@@ -37,8 +52,9 @@
         @yield('content')
       </div>
 
-      <footer class="bg-success text-center text-white py-2">
-        Copyright &copy; 2023 by Yori Adi Atma
+      <footer class="bg-success text-center text-white py-3 mt-4">
+        <p class="mb-0">&copy; {{ date('Y') }} <strong>tiMovie</strong> - Film Database Platform</p>
+        <small>Developed by Dzakk for Konstruksi & Evolusi Perangkat Lunak</small>
       </footer>
 
     <script src="/bootstrap/bootstrap.bundle.min.js"></script>

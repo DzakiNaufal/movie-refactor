@@ -23,7 +23,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ $movie['judul'] }}</h5>
                         <p class="card-text">{{ $movie['sinopsis'] }}</p>
-                        <a href="/movie/{{ $movie['id'] }}" class="btn btn-success">Lihat Selanjutnya</a>
+                        <a href="{{ route('movies.detail', $movie->id) }}" class="btn btn-success">Lihat Selanjutnya</a>
                     </div>
                 </div>
             </div>

@@ -2,8 +2,9 @@
 @section('title', 'Input Data Movie')
 @section('content')
 		<h2 class="mb-4">Edit Movie</h2>
-        <form action="{{ route('movies.update', ['movie' => $movie->id]) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('movies.update', $movie->id) }}" method="POST" enctype="multipart/form-data">
 			@csrf
+			@method('PUT')
 			<div class="mb-3">
 				<label for="id" class="form-label">ID Film:</label>
 				<input type="text" class="form-control" id="id" name="id" value="{{ $movie->id }}" disabled>
@@ -35,7 +36,7 @@
 			</div>
             <div class="mb-3">
                 <label for="foto" class="form-label">Foto Sebelumnya:</label>
-                <img src="/images/{{ $movie['foto_sampul'] }}" class="img-thumbnail"
+                <img src="/images/{{ $movie->foto_sampul }}" class="img-thumbnail"
                 alt="..." width="100px">
             </div>
 			<div class="mb-3">
