@@ -2,23 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Movie;
 use App\Models\Category;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\File;
+use App\Services\MovieService;
 use Illuminate\Support\Facades\Validator;
 
 class MovieController extends Controller
 {
-    public const IMAGES_PATH = 'images';
+    protected $movieService;
 
-    // ============ Helper Methods ============
-    
-    /**
-     * Validate store request
-     */
+    public function __construct(MovieService $movieService)
+    {
+        $this->movieService = $movieService;
+    }
+
     private function validateStore(Request $request)
     {
         return Validator::make($request->all(), [
@@ -32,9 +30,6 @@ class MovieController extends Controller
         ]);
     }
 
-    /**
-     * Validate update request
-     */
     private function validateUpdate(Request $request)
     {
         return Validator::make($request->all(), [
@@ -47,30 +42,6 @@ class MovieController extends Controller
         ]);
     }
 
-    /**
-     * Upload file and return filename
-     */
-    private function uploadFile($file)
-    {
-        $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path(self::IMAGES_PATH), $fileName);
-        return $fileName;
-    }
-
-    /**
-     * Delete file if exists
-     */
-    private function deleteFile($fileName)
-    {
-        $filePath = public_path(self::IMAGES_PATH . '/' . $fileName);
-        if (File::exists($filePath)) {
-            File::delete($filePath);
-        }
-    }
-
-    /**
-     * Get prepared movie data from request
-     */
     private function getMovieData(Request $request, $includeId = false)
     {
         $data = [
@@ -88,24 +59,15 @@ class MovieController extends Controller
         return $data;
     }
 
-    // ============ Controller Actions ============
-
-    public function index()
+    public function index(Request $request)
     {
-        $query = Movie::with('category')->latest();
-        
-        if (request('search')) {
-            $query->where('judul', 'like', '%' . request('search') . '%')
-                ->orWhere('sinopsis', 'like', '%' . request('search') . '%');
-        }
-
-        $movies = $query->paginate(6)->withQueryString();
+        $movies = $this->movieService->getAllMovies($request->search);
         return view('homepage', compact('movies'));
     }
 
     public function detail($id)
     {
-        $movie = Movie::with('category')->findOrFail($id);
+        $movie = $this->movieService->getMovieById($id);
         return view('detail', compact('movie'));
     }
 
@@ -125,25 +87,21 @@ class MovieController extends Controller
                 ->withInput();
         }
 
-        $fileName = $this->uploadFile($request->file('foto_sampul'));
-        
         $movieData = $this->getMovieData($request, true);
-        $movieData['foto_sampul'] = $fileName;
-
-        Movie::create($movieData);
+        $this->movieService->createMovie($movieData, $request->file('foto_sampul'));
 
         return redirect('/')->with('success', 'Data berhasil disimpan');
     }
 
     public function data()
     {
-        $movies = Movie::with('category')->latest()->paginate(10);
+        $movies = $this->movieService->getMoviesData();
         return view('data-movies', compact('movies'));
     }
 
     public function edit($id)
     {
-        $movie = Movie::findOrFail($id);
+        $movie = $this->movieService->getMovieById($id);
         $categories = Category::all();
         return view('form-edit', compact('movie', 'categories'));
     }
@@ -158,25 +116,15 @@ class MovieController extends Controller
                 ->withInput();
         }
 
-        $movie = Movie::findOrFail($id);
         $movieData = $this->getMovieData($request);
-
-        if ($request->hasFile('foto_sampul')) {
-            $this->deleteFile($movie->foto_sampul);
-            $movieData['foto_sampul'] = $this->uploadFile($request->file('foto_sampul'));
-        }
-
-        $movie->update($movieData);
+        $this->movieService->updateMovie($id, $movieData, $request->file('foto_sampul'));
 
         return redirect('/movies/data')->with('success', 'Data berhasil diperbarui');
     }
 
     public function destroy($id)
     {
-        $movie = Movie::findOrFail($id);
-        $this->deleteFile($movie->foto_sampul);
-        $movie->delete();
-
+        $this->movieService->deleteMovie($id);
         return redirect('/movies/data')->with('success', 'Data berhasil dihapus');
     }
 }
